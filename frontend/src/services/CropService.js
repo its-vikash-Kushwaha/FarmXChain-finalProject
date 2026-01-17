@@ -1,16 +1,16 @@
-  import axios from 'axios';
+import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8080/api/v1';
 
-class FarmerService {
+class CropService {
   getAuthHeaders() {
     const token = localStorage.getItem('token');
     return { Authorization: `Bearer ${token}` };
   }
 
-  async getFarmerProfile() {
+  async addCrop(cropData) {
     try {
-      const response = await axios.get(`${API_BASE_URL}/farmers/profile`, {
+      const response = await axios.post(`${API_BASE_URL}/crops/add`, cropData, {
         headers: this.getAuthHeaders()
       });
       return response.data;
@@ -19,9 +19,9 @@ class FarmerService {
     }
   }
 
-  async createFarmerProfile(profileData) {
+  async getMyCrops() {
     try {
-      const response = await axios.post(`${API_BASE_URL}/farmers/profile`, profileData, {
+      const response = await axios.get(`${API_BASE_URL}/crops/my-crops`, {
         headers: this.getAuthHeaders()
       });
       return response.data;
@@ -30,9 +30,9 @@ class FarmerService {
     }
   }
 
-  async updateFarmerProfile(profileData) {
+  async getCropById(cropId) {
     try {
-      const response = await axios.put(`${API_BASE_URL}/farmers/profile`, profileData, {
+      const response = await axios.get(`${API_BASE_URL}/crops/${cropId}`, {
         headers: this.getAuthHeaders()
       });
       return response.data;
@@ -41,9 +41,9 @@ class FarmerService {
     }
   }
 
-  async getAllFarmers() {
+  async getAllCrops() {
     try {
-      const response = await axios.get(`${API_BASE_URL}/farmers/all`, {
+      const response = await axios.get(`${API_BASE_URL}/crops/all`, {
         headers: this.getAuthHeaders()
       });
       return response.data;
@@ -52,9 +52,20 @@ class FarmerService {
     }
   }
 
-  async getFarmersByCrop(cropType) {
+  async getCropsWithBlockchainRecords() {
     try {
-      const response = await axios.get(`${API_BASE_URL}/farmers/crop/${cropType}`, {
+      const response = await axios.get(`${API_BASE_URL}/crops/blockchain-records`, {
+        headers: this.getAuthHeaders()
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  }
+
+  async verifyBlockchainRecord(cropId) {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/crops/${cropId}/verify-blockchain`, {
         headers: this.getAuthHeaders()
       });
       return response.data;
@@ -64,5 +75,5 @@ class FarmerService {
   }
 }
 
-const farmerService = new FarmerService();
-export default farmerService;
+const cropService = new CropService();
+export default cropService;

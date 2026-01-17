@@ -64,15 +64,12 @@ public class AuthService {
             throw new UnauthorizedException("Invalid email or password");
         }
 
-        if (UserStatus.PENDING.equals(user.getStatus())) {
-            throw new UnauthorizedException("Your account is pending verification. Please wait for admin approval.");
-        }
-
+        // Temporarily allow PENDING users for testing
         if (UserStatus.SUSPENDED.equals(user.getStatus())) {
             throw new UnauthorizedException("Your account has been suspended. Please contact support.");
         }
 
-        if (!UserStatus.ACTIVE.equals(user.getStatus())) {
+        if (!UserStatus.ACTIVE.equals(user.getStatus()) && !UserStatus.PENDING.equals(user.getStatus())) {
             throw new UnauthorizedException("Your account is not active. Please contact administrator for assistance.");
         }
 

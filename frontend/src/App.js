@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import AuthService from './services/AuthService';
 import AuthGuard from './utils/AuthGuard';
 import Login from './pages/Login';
@@ -15,8 +15,37 @@ import Logo from './components/Logo';
 import './App.css';
 
 function App() {
-  const isAuthenticated = AuthService.isAuthenticated();
-  const currentUser = AuthService.getCurrentUser();
+  const [isAuthenticated, setIsAuthenticated] = useState(AuthService.isAuthenticated());
+  const [currentUser, setCurrentUser] = useState(AuthService.getCurrentUser());
+
+  useEffect(() => {
+    const checkAuth = () => {
+      setIsAuthenticated(AuthService.isAuthenticated());
+      setCurrentUser(AuthService.getCurrentUser());
+    };
+
+    // Check auth on mount
+    checkAuth();
+
+    // Listen for storage changes (login/logout)
+    const handleStorageChange = () => {
+      checkAuth();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Custom event for auth changes within the same tab
+    const handleAuthChange = () => {
+      checkAuth();
+    };
+
+    window.addEventListener('authChange', handleAuthChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('authChange', handleAuthChange);
+    };
+  }, []);
 
   const handleLogout = () => {
     AuthService.logout();
@@ -35,34 +64,36 @@ function App() {
                     <Logo className="h-8 w-auto" />
                   </div>
                   <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                    <a href="/dashboard" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                      Dashboard
-                    </a>
+                    {currentUser?.role !== 'ADMIN' && (
+                      <Link to="/dashboard" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        Dashboard
+                      </Link>
+                    )}
                     {currentUser?.role === 'FARMER' && (
-                      <a href="/farmer-profile" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                      <Link to="/farmer-profile" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                         My Profile
-                      </a>
+                      </Link>
                     )}
                     {currentUser?.role === 'ADMIN' && (
                       <>
-                        <a href="/admin-dashboard" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        <Link to="/admin-dashboard" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                           Admin Dashboard
-                        </a>
-                        <a href="/user-management" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        </Link>
+                        <Link to="/user-management" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                           User Management
-                        </a>
-                        <a href="/farmer-verification" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        </Link>
+                        <Link to="/farmer-verification" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                           Farmer Verification
-                        </a>
-                        <a href="/statistics" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        </Link>
+                        <Link to="/statistics" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                           Statistics
-                        </a>
+                        </Link>
                       </>
                     )}
                     {(currentUser?.role === 'DISTRIBUTOR' || currentUser?.role === 'RETAILER' || currentUser?.role === 'CONSUMER') && (
-                      <a href="/farmer-list" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                      <Link to="/farmer-list" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                         Farmers
-                      </a>
+                      </Link>
                     )}
                   </div>
                 </div>

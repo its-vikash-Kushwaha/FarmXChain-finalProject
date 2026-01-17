@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import AuthService from '../services/AuthService';
-import Logo from '../components/Logo';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -11,48 +10,19 @@ const Dashboard = () => {
     setUser(currentUser);
   }, []);
 
-  const handleLogout = () => {
-    AuthService.logout();
-    window.location.href = '/login';
-  };
-
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-neutral-50 to-secondary-100">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-4 border-indigo-500"></div>
-          <p className="mt-4 text-gray-600 font-medium">Loading...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-4 border-primary-500"></div>
+          <p className="mt-4 text-neutral-600 font-medium">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-      {/* Modern Header */}
-      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center space-x-4">
-              <Logo className="h-12 w-12" />
-              <div>
-                <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-                <p className="text-indigo-100 text-sm">Welcome back to FarmXChain</p>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 backdrop-blur-sm"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-secondary-50">
       <div className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
 
@@ -90,7 +60,7 @@ const Dashboard = () => {
                   <div className="mt-4">
                     <Link
                       to="/farmer-profile"
-                      className="inline-flex items-center text-indigo-600 hover:text-indigo-700 text-sm font-medium transition-colors duration-200"
+                      className="inline-flex items-center text-secondary-600 hover:text-secondary-500 text-sm font-medium transition-colors duration-200"
                     >
                       View Profile
                       <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -120,7 +90,7 @@ const Dashboard = () => {
                     <div className="mt-4">
                       <Link
                         to="/user-management"
-                        className="inline-flex items-center text-indigo-600 hover:text-indigo-700 text-sm font-medium transition-colors duration-200"
+                        className="inline-flex items-center text-secondary-600 hover:text-secondary-500 text-sm font-medium transition-colors duration-200"
                       >
                         Manage Users
                         <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -147,7 +117,7 @@ const Dashboard = () => {
                     <div className="mt-4">
                       <Link
                         to="/farmer-verification"
-                        className="inline-flex items-center text-indigo-600 hover:text-indigo-700 text-sm font-medium transition-colors duration-200"
+                        className="inline-flex items-center text-secondary-600 hover:text-secondary-500 text-sm font-medium transition-colors duration-200"
                       >
                         Verify Farmers
                         <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -174,7 +144,7 @@ const Dashboard = () => {
                     <div className="mt-4">
                       <Link
                         to="/statistics"
-                        className="inline-flex items-center text-indigo-600 hover:text-indigo-700 text-sm font-medium transition-colors duration-200"
+                        className="inline-flex items-center text-secondary-600 hover:text-secondary-500 text-sm font-medium transition-colors duration-200"
                       >
                         View Statistics
                         <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -204,7 +174,7 @@ const Dashboard = () => {
                   <div className="mt-4">
                     <Link
                       to="/farmer-list"
-                      className="inline-flex items-center text-indigo-600 hover:text-indigo-700 text-sm font-medium transition-colors duration-200"
+                      className="inline-flex items-center text-secondary-600 hover:text-secondary-500 text-sm font-medium transition-colors duration-200"
                     >
                       Browse Farmers
                       <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

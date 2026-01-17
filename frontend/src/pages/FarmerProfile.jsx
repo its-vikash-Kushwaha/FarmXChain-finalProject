@@ -3,11 +3,13 @@ import FarmerService from '../services/FarmerService';
 
 const FarmerProfile = () => {
   const [profile, setProfile] = useState({
+    
+    farmName: '',
     farmLocation: '',
     cropType: '',
-    farmSize: '',
-    bankAccount: '',
-    ifscCode: ''
+    farmSizeAcres: '',
+    bankAccountNumber: '',
+    bankIfscCode: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -92,6 +94,21 @@ const FarmerProfile = () => {
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div>
+                      <label htmlFor="farmName" className="block text-sm font-medium text-gray-700">
+                        Farm Name
+                      </label>
+                      <input
+                        type="text"
+                        name="farmName"
+                        id="farmName"
+                        required
+                        className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2 border"
+                        value={profile.farmName}
+                        onChange={handleChange}
+                      />
+                    </div>
+
+                    <div>
                       <label htmlFor="farmLocation" className="block text-sm font-medium text-gray-700">
                         Farm Location
                       </label>
@@ -133,46 +150,46 @@ const FarmerProfile = () => {
                     </div>
 
                     <div>
-                      <label htmlFor="farmSize" className="block text-sm font-medium text-gray-700">
+                      <label htmlFor="farmSizeAcres" className="block text-sm font-medium text-gray-700">
                         Farm Size (in acres)
                       </label>
                       <input
                         type="number"
-                        name="farmSize"
-                        id="farmSize"
+                        name="farmSizeAcres"
+                        id="farmSizeAcres"
                         required
                         min="0"
                         step="0.01"
                         className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2 border"
-                        value={profile.farmSize}
+                        value={profile.farmSizeAcres}
                         onChange={handleChange}
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="bankAccount" className="block text-sm font-medium text-gray-700">
+                      <label htmlFor="bankAccountNumber" className="block text-sm font-medium text-gray-700">
                         Bank Account Number
                       </label>
                       <input
                         type="text"
-                        name="bankAccount"
-                        id="bankAccount"
+                        name="bankAccountNumber"
+                        id="bankAccountNumber"
                         className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2 border"
-                        value={profile.bankAccount}
+                        value={profile.bankAccountNumber}
                         onChange={handleChange}
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="ifscCode" className="block text-sm font-medium text-gray-700">
+                      <label htmlFor="bankIfscCode" className="block text-sm font-medium text-gray-700">
                         IFSC Code
                       </label>
                       <input
                         type="text"
-                        name="ifscCode"
-                        id="ifscCode"
+                        name="bankIfscCode"
+                        id="bankIfscCode"
                         className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2 border"
-                        value={profile.ifscCode}
+                        value={profile.bankIfscCode}
                         onChange={handleChange}
                       />
                     </div>
@@ -200,6 +217,10 @@ const FarmerProfile = () => {
                   {profile.id ? (
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                       <div>
+                        <dt className="text-sm font-medium text-gray-500">Farm Name</dt>
+                        <dd className="mt-1 text-sm text-gray-900">{profile.farmName || 'Not set'}</dd>
+                      </div>
+                      <div>
                         <dt className="text-sm font-medium text-gray-500">Farm Location</dt>
                         <dd className="mt-1 text-sm text-gray-900">{profile.farmLocation || 'Not set'}</dd>
                       </div>
@@ -209,15 +230,15 @@ const FarmerProfile = () => {
                       </div>
                       <div>
                         <dt className="text-sm font-medium text-gray-500">Farm Size</dt>
-                        <dd className="mt-1 text-sm text-gray-900">{profile.farmSize ? `${profile.farmSize} acres` : 'Not set'}</dd>
+                        <dd className="mt-1 text-sm text-gray-900">{profile.farmSizeAcres ? `${profile.farmSizeAcres} acres` : 'Not set'}</dd>
                       </div>
                       <div>
                         <dt className="text-sm font-medium text-gray-500">Bank Account</dt>
-                        <dd className="mt-1 text-sm text-gray-900">{profile.bankAccount || 'Not set'}</dd>
+                        <dd className="mt-1 text-sm text-gray-900">{profile.bankAccountNumber || 'Not set'}</dd>
                       </div>
                       <div>
                         <dt className="text-sm font-medium text-gray-500">IFSC Code</dt>
-                        <dd className="mt-1 text-sm text-gray-900">{profile.ifscCode || 'Not set'}</dd>
+                        <dd className="mt-1 text-sm text-gray-900">{profile.bankIfscCode || 'Not set'}</dd>
                       </div>
                     </div>
                   ) : (

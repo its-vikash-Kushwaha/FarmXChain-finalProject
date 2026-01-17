@@ -119,6 +119,13 @@ public class FarmerService {
                 .collect(Collectors.toList());
     }
 
+    public List<FarmerDTO> getAllFarmers() {
+        return farmerRepository.findAll()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     public FarmerDTO verifyFarmer(Long farmerId, Long adminId, String rejectionReason) {
         Farmer farmer = farmerRepository.findById(farmerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Farmer not found with id: " + farmerId));

@@ -44,20 +44,23 @@ const AdminDashboard = () => {
 
   const loadStatistics = useCallback(async () => {
     try {
-      const farmersData = await AdminService.getTotalFarmersCount();
-      const usersData = await AdminService.getTotalUsersCount();
+      const [farmersData, usersData, pendingFarmersData] = await Promise.all([
+        AdminService.getTotalFarmersCount(),
+        AdminService.getTotalUsersCount(),
+        AdminService.getPendingFarmers()
+      ]);
       setStats({
         totalFarmers: farmersData.data || 0,
         totalUsers: usersData.data || 0,
-        pendingVerifications: stats.pendingVerifications,
-        activeUsers: stats.activeUsers
+        pendingVerifications: pendingFarmersData.data ? pendingFarmersData.data.length : 0,
+        activeUsers: usersData.data || 0 // Assuming all users are active for now
       });
     } catch (err) {
       setError('Failed to load statistics');
     } finally {
       setLoading(false);
     }
-  }, [stats]);
+  }, []);
 
   useEffect(() => {
     loadStatistics();

@@ -38,6 +38,8 @@ class AuthService {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    // Dispatch custom event to notify auth state change
+    window.dispatchEvent(new Event('authChange'));
   }
 
   getCurrentUser() {

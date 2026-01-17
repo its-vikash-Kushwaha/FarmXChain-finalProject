@@ -13,7 +13,7 @@ const FarmerVerification = () => {
 
   const loadVerifications = async () => {
     try {
-      const data = await AdminService.getFarmerVerifications();
+      const data = await AdminService.getPendingFarmers();
       setVerifications(data.data || []);
     } catch (err) {
       setError('Failed to load farmer verifications');

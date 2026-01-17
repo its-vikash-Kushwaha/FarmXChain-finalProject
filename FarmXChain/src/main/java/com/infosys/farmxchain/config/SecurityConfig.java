@@ -44,7 +44,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/farmers/**").hasAnyRole("FARMER", "ADMIN")
+                        .requestMatchers("/farmers/**").hasAnyRole("FARMER", "ADMIN", "RETAILER")
                         .requestMatchers("/users/**").authenticated()
                         .anyRequest().authenticated()
                 )

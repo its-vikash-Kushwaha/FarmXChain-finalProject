@@ -27,7 +27,8 @@ const Login = () => {
     try {
       const response = await AuthService.login(credentials);
       if (response.success) {
-        navigate('/dashboard');
+        // Force page reload to ensure navbar shows immediately
+        window.location.href = '/dashboard';
       } else {
         setError(response.message || 'Login failed');
       }
@@ -39,17 +40,17 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-400 via-secondary-500 to-accent-600 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <div className="bg-white rounded-lg shadow-xl p-8">
+        <div className="bg-neutral-50 rounded-lg shadow-xl p-8 border border-neutral-200">
           <div className="text-center">
             <div className="flex justify-center mb-6">
               <Logo className="h-16 w-16" />
             </div>
-            <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
+            <h2 className="text-3xl font-thin text-neutral-900 mb-2">
               Welcome Back
             </h2>
-            <p className="text-gray-600">
+            <p className="text-neutral-600 font-medium">
               Sign in to your FarmXChain account
             </p>
           </div>
@@ -63,7 +64,7 @@ const Login = () => {
 
             <div className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-neutral-700 mb-1">
                   Email Address
                 </label>
                 <input
@@ -72,7 +73,7 @@ const Login = () => {
                   type="email"
                   autoComplete="email"
                   required
-                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  className="appearance-none relative block w-full px-3 py-3 border border-neutral-300 placeholder-neutral-500 text-neutral-900 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
                   placeholder="Enter your email"
                   value={credentials.email}
                   onChange={handleChange}
@@ -80,7 +81,7 @@ const Login = () => {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="password" className="block text-sm font-medium text-neutral-700 mb-1">
                   Password
                 </label>
                 <input
@@ -89,7 +90,7 @@ const Login = () => {
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  className="appearance-none relative block w-full px-3 py-3 border border-neutral-300 placeholder-neutral-500 text-neutral-900 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
                   placeholder="Enter your password"
                   value={credentials.password}
                   onChange={handleChange}
@@ -101,7 +102,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
               >
                 {loading ? (
                   <div className="flex items-center">
@@ -118,9 +119,9 @@ const Login = () => {
             </div>
 
             <div className="text-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-neutral-600 font-medium">
                 Don't have an account?{' '}
-                <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-200">
+                <Link to="/register" className="font-medium text-secondary-600 hover:text-secondary-500 transition-colors duration-200">
                   Sign up here
                 </Link>
               </p>

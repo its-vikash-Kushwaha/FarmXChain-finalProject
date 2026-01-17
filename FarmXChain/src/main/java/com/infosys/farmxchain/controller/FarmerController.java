@@ -86,6 +86,18 @@ public class FarmerController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<FarmerDTO>>> getAllFarmers() {
+        List<FarmerDTO> farmers = farmerService.getAllFarmers();
+        ApiResponse<List<FarmerDTO>> response = ApiResponse.<List<FarmerDTO>>builder()
+                .success(true)
+                .message("All farmers retrieved successfully")
+                .data(farmers)
+                .statusCode(HttpStatus.OK.value())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{farmerId}")
     public ResponseEntity<ApiResponse<String>> deleteFarmerProfile(@PathVariable Long farmerId) {
         farmerService.deleteFarmerProfile(farmerId);

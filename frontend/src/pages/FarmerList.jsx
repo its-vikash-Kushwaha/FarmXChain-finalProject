@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+ theimport React, { useState, useEffect, useCallback } from 'react';
 import FarmerService from '../services/FarmerService';
 
 const FarmerList = () => {
@@ -112,7 +112,7 @@ const FarmerList = () => {
                       </div>
                       <div>
                         <dt className="text-sm font-medium text-gray-500">Farm Size</dt>
-                        <dd className="mt-1 text-sm text-gray-900">{farmer.farmSize} acres</dd>
+                        <dd className="mt-1 text-sm text-gray-900">{farmer.farmSizeAcres} acres</dd>
                       </div>
                     </div>
                     <div className="mt-4">

@@ -6,6 +6,7 @@ import com.infosys.farmxchain.dto.LoginResponse;
 import com.infosys.farmxchain.dto.RegisterRequest;
 import com.infosys.farmxchain.dto.UserDTO;
 import com.infosys.farmxchain.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    @Operation(summary = "Register a new user", description = "Register a new user with the provided details")
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<UserDTO>> register(@Valid @RequestBody RegisterRequest request) {
         UserDTO user = authService.register(request);
@@ -44,6 +46,7 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "Validate token", description = "Validate the JWT token")
     @GetMapping("/validate")
     public ResponseEntity<ApiResponse<String>> validateToken() {
         ApiResponse<String> response = ApiResponse.<String>builder()
