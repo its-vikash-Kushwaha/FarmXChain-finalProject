@@ -1,4 +1,4 @@
-  import axios from 'axios';
+import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8080/api/v1';
 
@@ -55,6 +55,28 @@ class FarmerService {
   async getFarmersByCrop(cropType) {
     try {
       const response = await axios.get(`${API_BASE_URL}/farmers/crop/${cropType}`, {
+        headers: this.getAuthHeaders()
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  }
+
+  async getFarmerById(farmerId) {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/farmers/${farmerId}`, {
+        headers: this.getAuthHeaders()
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  }
+
+  async deleteFarmer(farmerId) {
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/farmers/${farmerId}`, {
         headers: this.getAuthHeaders()
       });
       return response.data;

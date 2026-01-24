@@ -1,4 +1,4 @@
- theimport React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import FarmerService from '../services/FarmerService';
 
 const FarmerList = () => {

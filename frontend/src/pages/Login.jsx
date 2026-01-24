@@ -40,24 +40,27 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-400 via-secondary-500 to-accent-600 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-neutral-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <div className="bg-neutral-50 rounded-lg shadow-xl p-8 border border-neutral-200">
+        <div className="bg-white rounded-2xl shadow-medium p-10 border border-neutral-100">
           <div className="text-center">
             <div className="flex justify-center mb-6">
-              <Logo className="h-16 w-16" />
+              <Logo className="h-14 w-auto" />
             </div>
-            <h2 className="text-3xl font-thin text-neutral-900 mb-2">
+            <h2 className="text-3xl font-bold text-neutral-900 mb-2">
               Welcome Back
             </h2>
-            <p className="text-neutral-600 font-medium">
-              Sign in to your FarmXChain account
+            <p className="text-neutral-500 text-sm">
+              Sign in to manage your FarmXChain account
             </p>
           </div>
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md">
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center">
+                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
                 {error}
               </div>
             )}
@@ -73,8 +76,8 @@ const Login = () => {
                   type="email"
                   autoComplete="email"
                   required
-                  className="appearance-none relative block w-full px-3 py-3 border border-neutral-300 placeholder-neutral-500 text-neutral-900 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                  placeholder="Enter your email"
+                  className="input-field"
+                  placeholder="name@company.com"
                   value={credentials.email}
                   onChange={handleChange}
                 />
@@ -90,7 +93,7 @@ const Login = () => {
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="appearance-none relative block w-full px-3 py-3 border border-neutral-300 placeholder-neutral-500 text-neutral-900 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                  className="input-field"
                   placeholder="Enter your password"
                   value={credentials.password}
                   onChange={handleChange}
@@ -98,11 +101,19 @@ const Login = () => {
               </div>
             </div>
 
+            <div className="flex items-center justify-between">
+              <div className="text-sm">
+                <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
+                  Forgot password?
+                </a>
+              </div>
+            </div>
+
             <div>
               <button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                className="btn-primary w-full py-3"
               >
                 {loading ? (
                   <div className="flex items-center">
@@ -118,11 +129,11 @@ const Login = () => {
               </button>
             </div>
 
-            <div className="text-center">
-              <p className="text-sm text-neutral-600 font-medium">
+            <div className="text-center mt-6">
+              <p className="text-sm text-neutral-600">
                 Don't have an account?{' '}
-                <Link to="/register" className="font-medium text-secondary-600 hover:text-secondary-500 transition-colors duration-200">
-                  Sign up here
+                <Link to="/register" className="font-medium text-primary-600 hover:text-primary-500 transition-colors duration-200">
+                  Create an account
                 </Link>
               </p>
             </div>

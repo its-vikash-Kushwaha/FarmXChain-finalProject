@@ -23,6 +23,20 @@ class AuthService {
     }
   }
 
+  async validateToken() {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return false;
+
+      const response = await axios.get(`${API_BASE_URL}/auth/validate`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return response.data.success;
+    } catch (error) {
+      return false;
+    }
+  }
+
   async register(userData) {
     try {
       console.log('Sending register request:', userData);

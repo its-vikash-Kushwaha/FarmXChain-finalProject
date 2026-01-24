@@ -47,6 +47,15 @@ public class Crop {
     @Column(name = "quality_data")
     private String qualityData;
 
+    @Column(name = "soil_type")
+    private String soilType;
+
+    @Column(name = "pesticides_used")
+    private String pesticidesUsed;
+
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

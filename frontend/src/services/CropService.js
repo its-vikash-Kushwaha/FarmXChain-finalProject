@@ -73,6 +73,23 @@ class CropService {
       throw error.response?.data || error.message;
     }
   }
+
+  async uploadFile(file) {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await axios.post(`${API_BASE_URL}/upload`, formData, {
+        headers: {
+          ...this.getAuthHeaders(),
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  }
 }
 
 const cropService = new CropService();

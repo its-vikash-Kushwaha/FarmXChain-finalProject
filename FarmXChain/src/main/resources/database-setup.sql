@@ -109,3 +109,28 @@ FROM users;
 SELECT 'Database Setup Completed Successfully!' as Status;
 SELECT COUNT(*) as Total_Users FROM users;
 SELECT COUNT(*) as Total_Farmers FROM farmers;
+
+-- Crops Table
+CREATE TABLE IF NOT EXISTS crops (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    farmer_id BIGINT NOT NULL,
+    crop_name VARCHAR(255) NOT NULL,
+    quantity_kg DECIMAL(10,2) NOT NULL,
+    harvest_date DATETIME NOT NULL,
+    quality_certificate_url VARCHAR(255),
+    blockchain_hash VARCHAR(255),
+    blockchain_tx_hash VARCHAR(255),
+    origin_location VARCHAR(255),
+    quality_data TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (farmer_id) REFERENCES farmers(id) ON DELETE CASCADE,
+    INDEX idx_crop_farmer (farmer_id),
+    INDEX idx_crop_blockchain (blockchain_hash)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Sample Crop Data
+INSERT INTO crops (id, farmer_id, crop_name, quantity_kg, harvest_date, origin_location, quality_data, created_at, blockchain_hash) VALUES 
+(1, 1, 'Wheat', 1000.50, NOW(), 'Jaipur, Rajasthan', 'Grade A Quality', NOW(), '0x123456789abcdef');
+
+SELECT COUNT(*) as Total_Crops FROM crops;

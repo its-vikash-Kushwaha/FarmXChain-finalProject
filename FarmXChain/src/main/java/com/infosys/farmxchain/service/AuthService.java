@@ -1,15 +1,20 @@
 package com.infosys.farmxchain.service;
 
+import com.infosys.farmxchain.dto.FarmerDTO;
+import com.infosys.farmxchain.dto.FarmerProfileRequest;
 import com.infosys.farmxchain.dto.LoginRequest;
 import com.infosys.farmxchain.dto.LoginResponse;
 import com.infosys.farmxchain.dto.RegisterRequest;
 import com.infosys.farmxchain.dto.UserDTO;
+import com.infosys.farmxchain.entity.Farmer;
+import com.infosys.farmxchain.entity.FarmerVerificationStatus;
 import com.infosys.farmxchain.entity.Role;
 import com.infosys.farmxchain.entity.User;
 import com.infosys.farmxchain.entity.UserStatus;
 import com.infosys.farmxchain.exception.EmailAlreadyExistsException;
 import com.infosys.farmxchain.exception.ResourceNotFoundException;
 import com.infosys.farmxchain.exception.UnauthorizedException;
+import com.infosys.farmxchain.repository.FarmerRepository;
 import com.infosys.farmxchain.repository.UserRepository;
 import com.infosys.farmxchain.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +29,9 @@ public class AuthService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private FarmerRepository farmerRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -53,6 +61,19 @@ public class AuthService {
                 .build();
 
         User savedUser = userRepository.save(user);
+
+        // Create farmer profile if user role is FARMER
+        if (Role.FARMER.equals(role)) {
+            Farmer farmer = Farmer.builder()
+                    .user(savedUser)
+                    .farmName("Default Farm") // Default values, can be updated later
+                    .farmLocation(request.getAddress() != null ? request.getAddress() : "Not specified")
+                    .cropType("GENERAL")
+                    .verificationStatus(FarmerVerificationStatus.PENDING)
+                    .build();
+            farmerRepository.save(farmer);
+        }
+
         return convertUserToDTO(savedUser);
     }
 

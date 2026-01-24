@@ -6,11 +6,16 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import FarmerProfile from './pages/FarmerProfile';
+import CropManagement from './pages/CropManagement';
 import UserManagement from './pages/UserManagement';
 import FarmerVerification from './pages/FarmerVerification';
 import AdminDashboard from './pages/AdminDashboard';
 import FarmerList from './pages/FarmerList';
 import Statistics from './pages/Statistics';
+import UserList from './pages/UserList';
+import Marketplace from './pages/Marketplace';
+import UserProfile from './pages/UserProfile';
+import FarmerDetails from './pages/FarmerDetails';
 import Logo from './components/Logo';
 import './App.css';
 
@@ -56,54 +61,75 @@ function App() {
     <Router>
       <div className="min-h-screen bg-gray-50">
         {isAuthenticated && (
-          <nav className="bg-white shadow">
+          <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-neutral-200">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between h-16">
                 <div className="flex">
                   <div className="flex-shrink-0 flex items-center">
-                    <Logo className="h-8 w-auto" />
+                    <Logo className="h-9 w-auto" />
                   </div>
-                  <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                  <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
                     {currentUser?.role !== 'ADMIN' && (
-                      <Link to="/dashboard" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                      <Link to="/dashboard" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
                         Dashboard
                       </Link>
                     )}
+                    <Link to="/marketplace" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
+                      Marketplace
+                    </Link>
                     {currentUser?.role === 'FARMER' && (
-                      <Link to="/farmer-profile" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                        My Profile
-                      </Link>
-                    )}
-                    {currentUser?.role === 'ADMIN' && (
                       <>
-                        <Link to="/admin-dashboard" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                          Admin Dashboard
+                        <Link to="/farmer-profile" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
+                          My Profile
                         </Link>
-                        <Link to="/user-management" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                          User Management
-                        </Link>
-                        <Link to="/farmer-verification" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                          Farmer Verification
-                        </Link>
-                        <Link to="/statistics" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                          Statistics
+                        <Link to="/crop-management" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
+                          Crop Management
                         </Link>
                       </>
                     )}
-                    {(currentUser?.role === 'DISTRIBUTOR' || currentUser?.role === 'RETAILER' || currentUser?.role === 'CONSUMER') && (
-                      <Link to="/farmer-list" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                    {currentUser?.role === 'ADMIN' && (
+                      <>
+                        <Link to="/admin-dashboard" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
+                          Dashboard
+                        </Link>
+                        <Link to="/user-management" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
+                          Users
+                        </Link>
+                        <Link to="/farmer-verification" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
+                          Verification
+                        </Link>
+                        <Link to="/statistics" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
+                          Stats
+                        </Link>
+                        <Link to="/distributors" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">Distributors</Link>
+                        <Link to="/retailers" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">Retailers</Link>
+                        <Link to="/consumers" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">Consumers</Link>
+                      </>
+                    )}
+                    {(currentUser?.role === 'DISTRIBUTOR' || currentUser?.role === 'RETAILER' || currentUser?.role === 'CONSUMER' || currentUser?.role === 'ADMIN') && (
+                      <Link to="/farmer-list" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
                         Farmers
+                      </Link>
+                    )}
+                    {currentUser?.role !== 'FARMER' && currentUser?.role !== 'ADMIN' && (
+                      <Link to="/profile" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
+                        My Profile
                       </Link>
                     )}
                   </div>
                 </div>
-                <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                  <span className="text-sm text-gray-700 mr-4">
-                    Welcome, {currentUser?.email}
-                  </span>
+                <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+                  <div className="flex flex-col items-end">
+                    <span className="text-sm font-medium text-neutral-900">
+                      {currentUser?.email}
+                    </span>
+                    <span className="text-xs text-neutral-500 uppercase">
+                      {currentUser?.role}
+                    </span>
+                  </div>
                   <button
                     onClick={handleLogout}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-md text-sm font-medium"
+                    className="inline-flex items-center px-3 py-1.5 border border-neutral-300 shadow-sm text-sm font-medium rounded-md text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
                   >
                     Logout
                   </button>
@@ -121,9 +147,19 @@ function App() {
               <Dashboard />
             </AuthGuard>
           } />
+          <Route path="/marketplace" element={
+            <AuthGuard>
+              <Marketplace />
+            </AuthGuard>
+          } />
           <Route path="/farmer-profile" element={
             <AuthGuard requiredRole="FARMER">
               <FarmerProfile />
+            </AuthGuard>
+          } />
+          <Route path="/crop-management" element={
+            <AuthGuard requiredRole="FARMER">
+              <CropManagement />
             </AuthGuard>
           } />
           <Route path="/admin-dashboard" element={
@@ -149,6 +185,31 @@ function App() {
           <Route path="/farmer-list" element={
             <AuthGuard>
               <FarmerList />
+            </AuthGuard>
+          } />
+          <Route path="/farmers/:id" element={
+            <AuthGuard>
+              <FarmerDetails />
+            </AuthGuard>
+          } />
+          <Route path="/profile" element={
+            <AuthGuard>
+              <UserProfile />
+            </AuthGuard>
+          } />
+          <Route path="/distributors" element={
+            <AuthGuard>
+              <UserList role="DISTRIBUTOR" title="Distributors" />
+            </AuthGuard>
+          } />
+          <Route path="/retailers" element={
+            <AuthGuard>
+              <UserList role="RETAILER" title="Retailers" />
+            </AuthGuard>
+          } />
+          <Route path="/consumers" element={
+            <AuthGuard>
+              <UserList role="CONSUMER" title="Consumers" />
             </AuthGuard>
           } />
           <Route path="/" element={<Navigate to="/dashboard" />} />
