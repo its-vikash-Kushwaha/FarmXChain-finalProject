@@ -139,6 +139,17 @@ class AdminService {
       throw error.response?.data || error.message;
     }
   }
+
+  async getPlatformOrders() {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/admin/orders`, {
+        headers: this.getAuthHeaders()
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  }
 }
 
 const adminService = new AdminService();

@@ -16,6 +16,7 @@ public class CropDTO {
     private FarmerDTO farmer;
     private String cropName;
     private BigDecimal quantityKg;
+    private BigDecimal pricePerKg;
     private LocalDateTime harvestDate;
     private String qualityCertificateUrl;
     private String blockchainHash;

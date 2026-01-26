@@ -20,6 +20,7 @@ public class UserDTO {
     private UserStatus status;
     private String phoneNumber;
     private Boolean isVerified;
+    private String walletAddress;
     private String address;
     private String city;
     private String state;
@@ -27,4 +28,5 @@ public class UserDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime lastLogin;
+    private java.math.BigDecimal balance;
 }

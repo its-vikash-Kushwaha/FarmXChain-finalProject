@@ -22,6 +22,9 @@ public class CropRequest {
     @Positive(message = "Quantity must be positive")
     private BigDecimal quantityKg;
 
+    @Positive(message = "Price per kg must be positive")
+    private BigDecimal pricePerKg;
+
     @NotNull(message = "Harvest date is required")
     private LocalDateTime harvestDate;
 

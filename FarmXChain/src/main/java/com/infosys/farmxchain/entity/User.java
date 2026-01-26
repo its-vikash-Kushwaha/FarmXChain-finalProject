@@ -41,6 +41,9 @@ public class User {
     @Column(name = "is_verified")
     private Boolean isVerified;
 
+    @Column(name = "wallet_address")
+    private String walletAddress;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -61,6 +64,10 @@ public class User {
 
     @Column(name = "postal_code")
     private String postalCode;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private java.math.BigDecimal balance = java.math.BigDecimal.valueOf(500000); // Initial dummy balance
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Farmer farmer;

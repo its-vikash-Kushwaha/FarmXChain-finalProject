@@ -127,6 +127,61 @@ public class BlockchainService {
         }
     }
     
+    public String transferOwnership(Long cropId, String newOwnerAddress) {
+        if (isConnected && credentials != null) {
+            try {
+                Function function = new Function(
+                        "transferOwnership",
+                        Arrays.asList(
+                                new Uint256(cropId),
+                                new Address(newOwnerAddress)
+                        ),
+                        Collections.emptyList());
+
+                String encodedFunction = FunctionEncoder.encode(function);
+                TransactionManager txManager = new RawTransactionManager(web3j, credentials);
+                String txHash = txManager.sendTransaction(
+                        BigInteger.valueOf(20_000_000_000L),
+                        BigInteger.valueOf(3000000),
+                        contractAddress,
+                        encodedFunction,
+                        BigInteger.ZERO).getTransactionHash();
+                return txHash;
+            } catch (Exception e) {
+                return "SIM_TX_OWNERSHIP_" + cropId;
+            }
+        }
+        return "SIM_TX_OWNERSHIP_" + cropId;
+    }
+
+    public String logShipment(Long orderId, String location, String conditionData) {
+        if (isConnected && credentials != null) {
+            try {
+                Function function = new Function(
+                        "logShipment",
+                        Arrays.asList(
+                                new Uint256(orderId),
+                                new Utf8String(location),
+                                new Utf8String(conditionData)
+                        ),
+                        Collections.emptyList());
+
+                String encodedFunction = FunctionEncoder.encode(function);
+                TransactionManager txManager = new RawTransactionManager(web3j, credentials);
+                String txHash = txManager.sendTransaction(
+                        BigInteger.valueOf(20_000_000_000L),
+                        BigInteger.valueOf(3000000),
+                        contractAddress,
+                        encodedFunction,
+                        BigInteger.ZERO).getTransactionHash();
+                return txHash;
+            } catch (Exception e) {
+                return "SIM_TX_SHIPMENT_" + orderId;
+            }
+        }
+        return "SIM_TX_SHIPMENT_" + orderId;
+    }
+
     private String simulateTransaction(Long cropId, String cropData) {
         String dataToHash = cropId + ":" + cropData + ":" + LocalDateTime.now().toString();
         String hash = generateBlockchainHash(dataToHash);

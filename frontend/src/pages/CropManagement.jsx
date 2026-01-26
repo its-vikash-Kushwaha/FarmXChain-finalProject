@@ -18,7 +18,8 @@ const CropManagement = () => {
     qualityData: '',
     soilType: '',
     pesticidesUsed: '',
-    imageUrl: ''
+    imageUrl: '',
+    pricePerKg: ''
   });
 
   useEffect(() => {
@@ -87,7 +88,8 @@ const CropManagement = () => {
     try {
       const cropData = {
         ...formData,
-        quantityKg: parseFloat(formData.quantityKg)
+        quantityKg: parseFloat(formData.quantityKg),
+        pricePerKg: parseFloat(formData.pricePerKg)
       };
 
       await CropService.addCrop(cropData);
@@ -100,7 +102,8 @@ const CropManagement = () => {
         qualityData: '',
         soilType: '',
         pesticidesUsed: '',
-        imageUrl: ''
+        imageUrl: '',
+        pricePerKg: ''
       });
       setShowAddForm(false);
       loadCrops(); // Refresh the list
@@ -120,7 +123,8 @@ const CropManagement = () => {
       qualityData: '',
       soilType: '',
       pesticidesUsed: '',
-      imageUrl: ''
+      imageUrl: '',
+      pricePerKg: ''
     });
     setShowAddForm(false);
     setError('');
@@ -190,6 +194,24 @@ const CropManagement = () => {
                         value={formData.quantityKg}
                         onChange={handleInputChange}
                         placeholder="e.g., 1000.50"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="pricePerKg" className="block text-sm font-medium text-gray-700">
+                        Price per kg (₹) *
+                      </label>
+                      <input
+                        type="number"
+                        name="pricePerKg"
+                        id="pricePerKg"
+                        required
+                        min="0"
+                        step="0.01"
+                        className="mt-1 focus:ring-green-500 focus:border-green-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2 border"
+                        value={formData.pricePerKg}
+                        onChange={handleInputChange}
+                        placeholder="e.g., 45.00"
                       />
                     </div>
 

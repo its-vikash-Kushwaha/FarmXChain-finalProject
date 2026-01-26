@@ -11,6 +11,7 @@ contract CropRegistry {
         uint256 harvestTimestamp;
         string dataHash; // SHA-256 hash of the crop data for verification
         address farmer;
+        address currentOwner;
         uint256 registrationTimestamp;
         bool exists;
     }
@@ -19,6 +20,8 @@ contract CropRegistry {
     mapping(address => uint256[]) public farmerCrops;
     
     event CropRegistered(uint256 indexed cropId, address indexed farmer, string cropName, uint256 quantityKg);
+    event OwnershipTransferred(uint256 indexed cropId, address indexed previousOwner, address indexed newOwner);
+    event ShipmentLogged(uint256 indexed orderId, string location, string conditionData);
     
     function registerCrop(
         uint256 _id,
@@ -38,6 +41,7 @@ contract CropRegistry {
             harvestTimestamp: _harvestTimestamp,
             dataHash: _dataHash,
             farmer: msg.sender,
+            currentOwner: msg.sender,
             registrationTimestamp: block.timestamp,
             exists: true
         });
@@ -68,5 +72,20 @@ contract CropRegistry {
     
     function getFarmerCropCount(address _farmer) public view returns (uint256) {
         return farmerCrops[_farmer].length;
+    }
+
+    function transferOwnership(uint256 _id, address _newOwner) public {
+        require(crops[_id].exists, "Crop does not exist");
+        require(crops[_id].currentOwner == msg.sender, "Only the current owner can transfer ownership");
+        
+        address previousOwner = crops[_id].currentOwner;
+        crops[_id].currentOwner = _newOwner;
+        
+        emit OwnershipTransferred(_id, previousOwner, _newOwner);
+    }
+
+    function logShipment(uint256 _orderId, string memory _location, string memory _conditionData) public {
+        // In a real scenario, we might want to restrict this to authorized carriers or the owner
+        emit ShipmentLogged(_orderId, _location, _conditionData);
     }
 }

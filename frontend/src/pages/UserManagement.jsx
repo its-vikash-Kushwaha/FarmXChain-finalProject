@@ -6,6 +6,7 @@ const UserManagement = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [currentTab, setCurrentTab] = useState('ALL');
 
   useEffect(() => {
     loadUsers();
@@ -21,6 +22,28 @@ const UserManagement = () => {
       setLoading(false);
     }
   };
+
+  const getFilteredUsers = () => {
+    if (currentTab === 'ALL') return users;
+    return users.filter(user => user.role === currentTab);
+  };
+
+  const getRoleCounts = () => {
+    const counts = { ALL: users.length, FARMER: 0, DISTRIBUTOR: 0, RETAILER: 0, CONSUMER: 0, ADMIN: 0 };
+    users.forEach(user => {
+      if (counts[user.role] !== undefined) counts[user.role]++;
+    });
+    return counts;
+  };
+
+  const counts = getRoleCounts();
+  const tabs = [
+    { id: 'ALL', label: 'All Users' },
+    { id: 'FARMER', label: 'Farmers' },
+    { id: 'DISTRIBUTOR', label: 'Distributors' },
+    { id: 'RETAILER', label: 'Retailers' },
+    { id: 'CONSUMER', label: 'Consumers' }
+  ];
 
   const handleAction = async (userId, action) => {
     try {
@@ -38,11 +61,11 @@ const UserManagement = () => {
           break;
         case 'suspend':
           await AdminService.suspendUser(userId);
-          setSuccess('User suspended successfully');
+          setSuccess('User has been BLOCKED successfully');
           break;
         case 'activate':
           await AdminService.activateUser(userId);
-          setSuccess('User activated successfully');
+          setSuccess('User has been UNBLOCKED successfully');
           break;
         default:
           return;
@@ -60,13 +83,15 @@ const UserManagement = () => {
       PENDING: 'bg-yellow-100 text-yellow-800',
       VERIFIED: 'bg-green-100 text-green-800',
       REJECTED: 'bg-red-100 text-red-800',
-      SUSPENDED: 'bg-gray-100 text-gray-800',
+      SUSPENDED: 'bg-red-200 text-red-900 border border-red-300', // Explicit Blocked style
       ACTIVE: 'bg-blue-100 text-blue-800'
     };
 
+    const label = status === 'SUSPENDED' ? 'BLOCKED' : status;
+
     return (
-      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusClasses[status] || 'bg-gray-100 text-gray-800'}`}>
-        {status}
+      <span className={`inline-flex px-3 py-1 text-xs font-black rounded-full shadow-sm ${statusClasses[status] || 'bg-gray-100 text-gray-800'}`}>
+        {label}
       </span>
     );
   };
@@ -124,6 +149,28 @@ const UserManagement = () => {
             </div>
           )}
 
+          <div className="mb-6 border-b border-gray-200">
+            <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setCurrentTab(tab.id)}
+                  className={`
+                    whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
+                    ${currentTab === tab.id
+                      ? 'border-indigo-500 text-indigo-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
+                  `}
+                >
+                  {tab.label}
+                  <span className={`ml-2 py-0.5 px-2.5 rounded-full text-xs font-medium ${currentTab === tab.id ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-900'}`}>
+                    {counts[tab.id]}
+                  </span>
+                </button>
+              ))}
+            </nav>
+          </div>
+
           <div className="bg-white shadow overflow-hidden sm:rounded-md">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -157,8 +204,8 @@ const UserManagement = () => {
                       </td>
                     </tr>
                   ) : (
-                    users.map((user) => (
-                      <tr key={user.id}>
+                    getFilteredUsers().map((user) => (
+                      <tr key={user.id} className={user.status === 'SUSPENDED' ? 'bg-gray-50 opacity-60' : 'hover:bg-gray-50 transition-colors'}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div>
@@ -207,7 +254,7 @@ const UserManagement = () => {
                                   onClick={() => handleAction(user.id, 'verify')}
                                   className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-medium"
                                 >
-                                  Verify
+                                  Approve
                                 </button>
                                 <button
                                   onClick={() => handleAction(user.id, 'reject')}
@@ -217,12 +264,12 @@ const UserManagement = () => {
                                 </button>
                               </>
                             )}
-                            {user.status === 'VERIFIED' && (
+                            {user.status === 'ACTIVE' && user.role !== 'ADMIN' && (
                               <button
                                 onClick={() => handleAction(user.id, 'suspend')}
-                                className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-xs font-medium"
+                                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium shadow-sm transition-colors"
                               >
-                                Suspend
+                                Block User
                               </button>
                             )}
                             {user.status === 'SUSPENDED' && (
@@ -230,7 +277,7 @@ const UserManagement = () => {
                                 onClick={() => handleAction(user.id, 'activate')}
                                 className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium"
                               >
-                                Activate
+                                Unblock / Reactivate
                               </button>
                             )}
                           </div>

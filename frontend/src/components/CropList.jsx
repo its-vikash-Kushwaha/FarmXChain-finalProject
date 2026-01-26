@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import CropService from '../services/CropService';
 
-const CropList = ({ crops: initialCrops, showVerification = true }) => {
+const CropList = ({ crops: initialCrops, showVerification = true, onBuy }) => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  const isBuyer = ['RETAILER', 'DISTRIBUTOR', 'CONSUMER'].includes(user?.role);
   const [crops, setCrops] = useState(initialCrops || []);
   const [verificationStatus, setVerificationStatus] = useState({});
   const [loading, setLoading] = useState(false);
@@ -94,6 +96,12 @@ const CropList = ({ crops: initialCrops, showVerification = true }) => {
                 {crop.quantityKg} kg
               </span>
             </div>
+            {crop.pricePerKg && (
+              <div className="mb-3">
+                <span className="text-2xl font-bold text-green-600">₹{crop.pricePerKg}</span>
+                <span className="text-gray-500 text-sm"> / kg</span>
+              </div>
+            )}
 
             {/* Farmer Info Section */}
             {crop.farmer && (
@@ -171,6 +179,18 @@ const CropList = ({ crops: initialCrops, showVerification = true }) => {
                     className="text-indigo-600 hover:text-indigo-800 text-sm font-medium focus:outline-none disabled:opacity-50"
                   >
                     {loading ? 'Verifying...' : 'Verify Chain'}
+                  </button>
+                )}
+
+                {isBuyer && (
+                  <button
+                    onClick={() => onBuy && onBuy(crop)}
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-md flex items-center"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Buy Now
                   </button>
                 )}
               </div>

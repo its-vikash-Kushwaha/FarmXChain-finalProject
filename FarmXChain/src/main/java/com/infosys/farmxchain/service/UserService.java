@@ -95,6 +95,18 @@ public class UserService {
         }
     }
 
+    public UserDTO topUpBalance(Long userId, java.math.BigDecimal amount) {
+        if (amount.compareTo(java.math.BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Top-up amount must be positive");
+        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+        
+        user.setBalance(user.getBalance().add(amount));
+        User updatedUser = userRepository.save(user);
+        return AuthService.convertUserToDTO(updatedUser);
+    }
+
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));

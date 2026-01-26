@@ -58,6 +58,7 @@ public class AuthService {
                 .state(request.getState())
                 .postalCode(request.getPostalCode())
                 .isVerified(false)
+                .walletAddress(request.getWalletAddress())
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -85,13 +86,19 @@ public class AuthService {
             throw new UnauthorizedException("Invalid email or password");
         }
 
-        // Temporarily allow PENDING users for testing
+        // Check if account is suspended/blocked
         if (UserStatus.SUSPENDED.equals(user.getStatus())) {
-            throw new UnauthorizedException("Your account has been suspended. Please contact support.");
+            throw new UnauthorizedException("Your account has been blocked by the administrator. Please contact support.");
         }
 
-        if (!UserStatus.ACTIVE.equals(user.getStatus()) && !UserStatus.PENDING.equals(user.getStatus())) {
-            throw new UnauthorizedException("Your account is not active. Please contact administrator for assistance.");
+        // Enforce Admin Verification: Only ACTIVE users can login
+        // Note: We usually allow ADMINs to bypass this if they are already active
+        if (UserStatus.PENDING.equals(user.getStatus())) {
+            throw new UnauthorizedException("Your account is pending admin verification. You will be able to login once approved.");
+        }
+
+        if (!UserStatus.ACTIVE.equals(user.getStatus())) {
+            throw new UnauthorizedException("Your account is not active. Please contact administrator.");
         }
 
         user.setLastLogin(LocalDateTime.now());
@@ -137,6 +144,7 @@ public class AuthService {
                 .status(user.getStatus())
                 .phoneNumber(user.getPhoneNumber())
                 .isVerified(user.getIsVerified())
+                .walletAddress(user.getWalletAddress())
                 .address(user.getAddress())
                 .city(user.getCity())
                 .state(user.getState())
@@ -144,6 +152,7 @@ public class AuthService {
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .lastLogin(user.getLastLogin())
+                .balance(user.getBalance())
                 .build();
     }
 }

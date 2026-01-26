@@ -9,55 +9,40 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "crops")
+@Table(name = "orders")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Crop {
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "buyer_id", nullable = false)
+    private User buyer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "farmer_id", nullable = false)
     private Farmer farmer;
 
-    @Column(name = "crop_name", nullable = false)
-    private String cropName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "crop_id", nullable = false)
+    private Crop crop;
 
-    @Column(name = "quantity_kg", nullable = false)
-    private BigDecimal quantityKg;
+    @Column(nullable = false)
+    private BigDecimal quantity;
 
-    @Column(name = "price_per_kg")
-    private BigDecimal pricePerKg;
+    @Column(name = "total_price")
+    private BigDecimal totalPrice;
 
-    @Column(name = "harvest_date", nullable = false)
-    private LocalDateTime harvestDate;
-
-    @Column(name = "quality_certificate_url")
-    private String qualityCertificateUrl;
-
-    @Column(name = "blockchain_hash", unique = true)
-    private String blockchainHash;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OrderStatus status;
 
     @Column(name = "blockchain_tx_hash")
     private String blockchainTxHash;
-
-    @Column(name = "origin_location")
-    private String originLocation;
-
-    @Column(name = "quality_data")
-    private String qualityData;
-
-    @Column(name = "soil_type")
-    private String soilType;
-
-    @Column(name = "pesticides_used")
-    private String pesticidesUsed;
-
-    @Column(name = "image_url")
-    private String imageUrl;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -69,6 +54,9 @@ public class Crop {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (status == null) {
+            status = OrderStatus.PENDING;
+        }
     }
 
     @PreUpdate

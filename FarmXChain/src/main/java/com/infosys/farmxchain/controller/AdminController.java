@@ -3,10 +3,12 @@ package com.infosys.farmxchain.controller;
 import com.infosys.farmxchain.dto.ApiResponse;
 import com.infosys.farmxchain.dto.FarmerDTO;
 import com.infosys.farmxchain.dto.UserDTO;
+import com.infosys.farmxchain.dto.OrderDTO;
 import com.infosys.farmxchain.dto.FarmerVerificationRequest;
 import com.infosys.farmxchain.entity.FarmerVerificationStatus;
 import com.infosys.farmxchain.security.SecurityUtils;
 import com.infosys.farmxchain.service.FarmerService;
+import com.infosys.farmxchain.service.OrderService;
 import com.infosys.farmxchain.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class AdminController {
 
     @Autowired
     private FarmerService farmerService;
+
+    @Autowired
+    private OrderService orderService;
 
     // User Management Endpoints
     @GetMapping("/users")
@@ -207,6 +212,18 @@ public class AdminController {
                 .success(true)
                 .message("Total users count retrieved successfully")
                 .data(users.size())
+                .statusCode(HttpStatus.OK.value())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<ApiResponse<List<OrderDTO>>> getAllPlatformOrders() {
+        List<OrderDTO> orders = orderService.getAllOrders();
+        ApiResponse<List<OrderDTO>> response = ApiResponse.<List<OrderDTO>>builder()
+                .success(true)
+                .message("All platform transactions retrieved successfully")
+                .data(orders)
                 .statusCode(HttpStatus.OK.value())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);

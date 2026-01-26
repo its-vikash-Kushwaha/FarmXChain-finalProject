@@ -137,4 +137,17 @@ public class UserController {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PostMapping("/top-up")
+    public ResponseEntity<ApiResponse<UserDTO>> topUpBalance(@RequestParam java.math.BigDecimal amount) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        UserDTO user = userService.topUpBalance(userId, amount);
+        ApiResponse<UserDTO> response = ApiResponse.<UserDTO>builder()
+                .success(true)
+                .message("Balance topped up successfully")
+                .data(user)
+                .statusCode(HttpStatus.OK.value())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

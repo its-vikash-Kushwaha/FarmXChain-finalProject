@@ -49,6 +49,21 @@ class AuthService {
     }
   }
 
+  async getProfile() {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/users/profile`, {
+        headers: { Authorization: `Bearer ${this.getToken()}` }
+      });
+      if (response.data.data) {
+        localStorage.setItem('user', JSON.stringify(response.data.data));
+        window.dispatchEvent(new Event('authChange'));
+      }
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.message || error.message;
+    }
+  }
+
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');

@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
     city VARCHAR(100),
     state VARCHAR(100),
     postal_code VARCHAR(10),
+    balance DECIMAL(15,2) NOT NULL DEFAULT 500000.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     last_login TIMESTAMP NULL,
@@ -116,6 +117,7 @@ CREATE TABLE IF NOT EXISTS crops (
     farmer_id BIGINT NOT NULL,
     crop_name VARCHAR(255) NOT NULL,
     quantity_kg DECIMAL(10,2) NOT NULL,
+    price_per_kg DECIMAL(10,2) NOT NULL,
     harvest_date DATETIME NOT NULL,
     quality_certificate_url VARCHAR(255),
     blockchain_hash VARCHAR(255),
@@ -130,7 +132,44 @@ CREATE TABLE IF NOT EXISTS crops (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Sample Crop Data
-INSERT INTO crops (id, farmer_id, crop_name, quantity_kg, harvest_date, origin_location, quality_data, created_at, blockchain_hash) VALUES 
-(1, 1, 'Wheat', 1000.50, NOW(), 'Jaipur, Rajasthan', 'Grade A Quality', NOW(), '0x123456789abcdef');
+INSERT INTO crops (id, farmer_id, crop_name, quantity_kg, price_per_kg, harvest_date, origin_location, quality_data, created_at, blockchain_hash) VALUES 
+(1, 1, 'Wheat', 1000.50, 45.00, NOW(), 'Jaipur, Rajasthan', 'Grade A Quality', NOW(), '0x123456789abcdef');
 
 SELECT COUNT(*) as Total_Crops FROM crops;
+
+-- Orders Table
+CREATE TABLE IF NOT EXISTS orders (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    buyer_id BIGINT NOT NULL,
+    farmer_id BIGINT NOT NULL,
+    crop_id BIGINT NOT NULL,
+    quantity DECIMAL(15,2) NOT NULL,
+    total_price DECIMAL(15,2) NOT NULL,
+    status ENUM('PENDING', 'ACCEPTED', 'REJECTED', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'COMPLETED') NOT NULL DEFAULT 'PENDING',
+    blockchain_tx_hash VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (buyer_id) REFERENCES users(id),
+    FOREIGN KEY (farmer_id) REFERENCES farmers(id),
+    FOREIGN KEY (crop_id) REFERENCES crops(id),
+    INDEX idx_order_buyer (buyer_id),
+    INDEX idx_order_farmer (farmer_id),
+    INDEX idx_order_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Shipments Table
+CREATE TABLE IF NOT EXISTS shipments (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    order_id BIGINT UNIQUE NOT NULL,
+    current_location VARCHAR(255),
+    temperature DOUBLE PRECISION,
+    humidity DOUBLE PRECISION,
+    status ENUM('PENDING', 'IN_TRANSIT', 'DELAYED', 'DELIVERED', 'RETURNED') NOT NULL DEFAULT 'PENDING',
+    blockchain_tx_hash VARCHAR(255),
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    INDEX idx_shipment_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+SELECT COUNT(*) as Total_Orders FROM orders;
+SELECT COUNT(*) as Total_Shipments FROM shipments;

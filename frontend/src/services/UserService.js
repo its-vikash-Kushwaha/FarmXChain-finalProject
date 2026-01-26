@@ -84,6 +84,22 @@ class UserService {
             throw error.response?.data || error.message;
         }
     }
+
+    async topUpWallet(amount) {
+        try {
+            const response = await axios.post(`${API_BASE_URL}/users/top-up`, null, {
+                params: { amount },
+                headers: this.getAuthHeaders()
+            });
+            if (response.data.data) {
+                localStorage.setItem('user', JSON.stringify(response.data.data));
+                window.dispatchEvent(new Event('authChange'));
+            }
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    }
 }
 
 const userService = new UserService();

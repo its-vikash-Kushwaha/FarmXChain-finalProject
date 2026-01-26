@@ -14,8 +14,11 @@ import FarmerList from './pages/FarmerList';
 import Statistics from './pages/Statistics';
 import UserList from './pages/UserList';
 import Marketplace from './pages/Marketplace';
+import Orders from './pages/Orders';
+import Tracking from './pages/Tracking';
 import UserProfile from './pages/UserProfile';
 import FarmerDetails from './pages/FarmerDetails';
+import AdminOrders from './pages/AdminOrders';
 import Logo from './components/Logo';
 import './App.css';
 
@@ -101,14 +104,19 @@ function App() {
                         <Link to="/statistics" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
                           Stats
                         </Link>
-                        <Link to="/distributors" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">Distributors</Link>
-                        <Link to="/retailers" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">Retailers</Link>
-                        <Link to="/consumers" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">Consumers</Link>
+                        <Link to="/admin/orders" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
+                          Transactions
+                        </Link>
                       </>
                     )}
                     {(currentUser?.role === 'DISTRIBUTOR' || currentUser?.role === 'RETAILER' || currentUser?.role === 'CONSUMER' || currentUser?.role === 'ADMIN') && (
                       <Link to="/farmer-list" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
                         Farmers
+                      </Link>
+                    )}
+                    {isAuthenticated && currentUser?.role !== 'ADMIN' && (
+                      <Link to="/orders" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
+                        My Orders
                       </Link>
                     )}
                     {currentUser?.role !== 'FARMER' && currentUser?.role !== 'ADMIN' && (
@@ -118,12 +126,25 @@ function App() {
                     )}
                   </div>
                 </div>
-                <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
-                  <div className="flex flex-col items-end">
-                    <span className="text-sm font-medium text-neutral-900">
-                      {currentUser?.email}
+                <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-6">
+                  {isAuthenticated && (
+                    <div className="flex items-center px-4 py-1.5 bg-green-50 border border-green-100 rounded-full shadow-sm group hover:bg-green-100 transition-colors">
+                      <div className="flex flex-col items-center mr-3">
+                        <svg className="h-4 w-4 text-green-600 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] text-green-600 font-black uppercase tracking-widest leading-none mb-0.5">Wallet Balance</p>
+                        <p className="text-sm font-black text-green-700 leading-none">₹{currentUser?.balance?.toLocaleString() || '0'}</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex flex-col items-end border-l border-neutral-200 pl-6">
+                    <span className="text-sm font-black text-neutral-900 leading-none mb-1">
+                      {currentUser?.name}
                     </span>
-                    <span className="text-xs text-neutral-500 uppercase">
+                    <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest leading-none">
                       {currentUser?.role}
                     </span>
                   </div>
@@ -182,6 +203,11 @@ function App() {
               <Statistics />
             </AuthGuard>
           } />
+          <Route path="/admin/orders" element={
+            <AuthGuard requiredRole="ADMIN">
+              <AdminOrders />
+            </AuthGuard>
+          } />
           <Route path="/farmer-list" element={
             <AuthGuard>
               <FarmerList />
@@ -195,6 +221,16 @@ function App() {
           <Route path="/profile" element={
             <AuthGuard>
               <UserProfile />
+            </AuthGuard>
+          } />
+          <Route path="/orders" element={
+            <AuthGuard>
+              <Orders />
+            </AuthGuard>
+          } />
+          <Route path="/tracking/:orderId" element={
+            <AuthGuard>
+              <Tracking />
             </AuthGuard>
           } />
           <Route path="/distributors" element={
@@ -215,7 +251,7 @@ function App() {
           <Route path="/" element={<Navigate to="/dashboard" />} />
         </Routes>
       </div>
-    </Router>
+    </Router >
   );
 }
 

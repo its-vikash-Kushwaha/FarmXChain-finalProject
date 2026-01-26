@@ -27,6 +27,8 @@ public class RegisterRequest {
     @NotBlank(message = "Role is required")
     private String role;
 
+    private String walletAddress;
+
     private String phoneNumber;
     private String address;
     private String city;
