@@ -31,6 +31,10 @@ public class Order {
     @JoinColumn(name = "crop_id", nullable = false)
     private Crop crop;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "distributor_id")
+    private User distributor;
+
     @Column(nullable = false)
     private BigDecimal quantity;
 
@@ -49,6 +53,12 @@ public class Order {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "delivery_address", columnDefinition = "TEXT")
+    private String deliveryAddress;
+
+    @Column(name = "delivery_fee")
+    private BigDecimal deliveryFee;
 
     @PrePersist
     protected void onCreate() {

@@ -51,6 +51,7 @@ public class OrderService {
                 .quantity(request.getQuantity())
                 .totalPrice(totalPrice)
                 .status(OrderStatus.PENDING)
+                .deliveryAddress(request.getDeliveryAddress()) // Set delivery address
                 .build();
 
         Order savedOrder = orderRepository.save(order);
@@ -155,6 +156,28 @@ public class OrderService {
         return convertToDTO(orderRepository.save(order));
     }
 
+    public OrderDTO assignToDistributor(Long orderId, Long distributorId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
+
+        User distributor = userRepository.findById(distributorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Distributor not found with id: " + distributorId));
+
+        if (distributor.getRole() != Role.DISTRIBUTOR) {
+            throw new RuntimeException("User is not a distributor");
+        }
+
+        // Only accepted orders can be assigned to distributors
+        if (order.getStatus() != OrderStatus.ACCEPTED) {
+            throw new RuntimeException("Only accepted orders can be assigned to distributors. Current status: " + order.getStatus());
+        }
+
+        order.setDistributor(distributor);
+        order.setStatus(OrderStatus.ASSIGNED);
+
+        return convertToDTO(orderRepository.save(order));
+    }
+
     private OrderDTO convertToDTO(Order order) {
         return OrderDTO.builder()
                 .id(order.getId())
@@ -168,8 +191,11 @@ public class OrderService {
                 .totalPrice(order.getTotalPrice())
                 .status(order.getStatus())
                 .buyerRole(order.getBuyer().getRole().name())
+                .distributorId(order.getDistributor() != null ? order.getDistributor().getId() : null)
+                .distributorName(order.getDistributor() != null ? order.getDistributor().getName() : null)
                 .blockchainTxHash(order.getBlockchainTxHash())
                 .createdAt(order.getCreatedAt())
+                .deliveryAddress(order.getDeliveryAddress()) // Map delivery address
                 .build();
     }
 }

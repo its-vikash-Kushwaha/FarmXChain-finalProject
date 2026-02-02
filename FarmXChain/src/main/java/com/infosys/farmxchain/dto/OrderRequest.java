@@ -7,4 +7,5 @@ import java.math.BigDecimal;
 public class OrderRequest {
     private Long cropId;
     private BigDecimal quantity;
+    private String deliveryAddress; // Buyer's delivery address
 }

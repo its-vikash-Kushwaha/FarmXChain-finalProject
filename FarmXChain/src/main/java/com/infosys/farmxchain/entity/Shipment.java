@@ -22,6 +22,20 @@ public class Shipment {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "distributor_id")
+    private User distributor;
+
+    @Column(name = "origin")
+    private String origin;
+
+    @Column(name = "destination")
+    private String destination;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transport_mode")
+    private TransportMode transportMode;
+
     @Column(name = "current_location")
     private String currentLocation;
 
@@ -40,6 +54,12 @@ public class Shipment {
 
     @Column(name = "blockchain_tx_hash")
     private String blockchainTxHash;
+
+    @Column(name = "custody_hash")
+    private String custodyHash;
+
+    @OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL, orphanRemoval = false)
+    private java.util.List<ShipmentLog> logs;
 
     @PrePersist
     @PreUpdate

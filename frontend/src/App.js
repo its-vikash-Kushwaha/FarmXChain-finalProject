@@ -19,6 +19,8 @@ import Tracking from './pages/Tracking';
 import UserProfile from './pages/UserProfile';
 import FarmerDetails from './pages/FarmerDetails';
 import AdminOrders from './pages/AdminOrders';
+import DistributorDashboard from './pages/DistributorDashboard';
+import EarningsHistory from './pages/EarningsHistory';
 import Logo from './components/Logo';
 import './App.css';
 
@@ -77,9 +79,11 @@ function App() {
                         Dashboard
                       </Link>
                     )}
-                    <Link to="/marketplace" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
-                      Marketplace
-                    </Link>
+                    {currentUser?.role !== 'DISTRIBUTOR' && (
+                      <Link to="/marketplace" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
+                        Marketplace
+                      </Link>
+                    )}
                     {currentUser?.role === 'FARMER' && (
                       <>
                         <Link to="/farmer-profile" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
@@ -109,12 +113,22 @@ function App() {
                         </Link>
                       </>
                     )}
+                    {currentUser?.role === 'DISTRIBUTOR' && (
+                      <>
+                        <Link to="/distributor-dashboard" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
+                          My Shipments
+                        </Link>
+                        <Link to="/earnings" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
+                          Earnings
+                        </Link>
+                      </>
+                    )}
                     {(currentUser?.role === 'DISTRIBUTOR' || currentUser?.role === 'RETAILER' || currentUser?.role === 'CONSUMER' || currentUser?.role === 'ADMIN') && (
                       <Link to="/farmer-list" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
                         Farmers
                       </Link>
                     )}
-                    {isAuthenticated && currentUser?.role !== 'ADMIN' && (
+                    {isAuthenticated && currentUser?.role !== 'ADMIN' && currentUser?.role !== 'DISTRIBUTOR' && (
                       <Link to="/orders" className="text-neutral-600 hover:text-primary-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors">
                         My Orders
                       </Link>
@@ -127,7 +141,7 @@ function App() {
                   </div>
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-6">
-                  {isAuthenticated && (
+                  {isAuthenticated && currentUser?.role !== 'ADMIN' && (
                     <div className="flex items-center px-4 py-1.5 bg-green-50 border border-green-100 rounded-full shadow-sm group hover:bg-green-100 transition-colors">
                       <div className="flex flex-col items-center mr-3">
                         <svg className="h-4 w-4 text-green-600 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -236,6 +250,16 @@ function App() {
           <Route path="/distributors" element={
             <AuthGuard>
               <UserList role="DISTRIBUTOR" title="Distributors" />
+            </AuthGuard>
+          } />
+          <Route path="/distributor-dashboard" element={
+            <AuthGuard requiredRole="DISTRIBUTOR">
+              <DistributorDashboard />
+            </AuthGuard>
+          } />
+          <Route path="/earnings" element={
+            <AuthGuard requiredRole="DISTRIBUTOR">
+              <EarningsHistory />
             </AuthGuard>
           } />
           <Route path="/retailers" element={

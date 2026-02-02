@@ -1,9 +1,9 @@
 package com.infosys.farmxchain.entity;
 
-public enum ShipmentStatus {
+public enum ShipmentAction {
     PICKED_UP,
     IN_TRANSIT,
     DELIVERED,
-    DELAYED,
-    CANCELLED
+    LOCATION_UPDATE,
+    STATUS_UPDATE
 }

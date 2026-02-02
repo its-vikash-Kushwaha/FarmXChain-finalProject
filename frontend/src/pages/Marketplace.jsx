@@ -10,6 +10,7 @@ const Marketplace = () => {
     const [error, setError] = useState('');
     const [orderModal, setOrderModal] = useState({ show: false, crop: null });
     const [orderQuantity, setOrderQuantity] = useState('');
+    const [deliveryAddress, setDeliveryAddress] = useState('');
     const [orderLoading, setOrderLoading] = useState(false);
     const [successMsg, setSuccessMsg] = useState('');
 
@@ -55,7 +56,8 @@ const Marketplace = () => {
             setError('');
             await OrderService.placeOrder({
                 cropId: orderModal.crop.id,
-                quantity: quantity
+                quantity: quantity,
+                deliveryAddress: deliveryAddress
             });
 
             // Refresh user profile/balance after purchase
@@ -140,6 +142,23 @@ const Marketplace = () => {
                             </div>
 
                             <div className="mb-6">
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Delivery Address <span className="text-red-500">*</span>
+                                </label>
+                                <textarea
+                                    value={deliveryAddress}
+                                    onChange={(e) => setDeliveryAddress(e.target.value)}
+                                    placeholder="Enter complete delivery address (Street, City, State, Postal Code)"
+                                    rows="3"
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                                    required
+                                />
+                                <p className="mt-2 text-xs text-gray-500">
+                                    📍 Enter the complete address where you want the crop delivered
+                                </p>
+                            </div>
+
+                            <div className="mb-6">
                                 <p className="text-sm text-gray-600">Total Price:</p>
                                 <p className="text-3xl font-extrabold text-green-600">
                                     {orderModal.crop.pricePerKg ?
@@ -171,6 +190,8 @@ const Marketplace = () => {
                                         disabled={
                                             orderLoading ||
                                             !orderQuantity ||
+                                            !deliveryAddress ||
+                                            deliveryAddress.trim().length < 10 ||
                                             Number(orderQuantity) <= 0 ||
                                             Number(orderQuantity) > Number(orderModal.crop.quantityKg) ||
                                             (AuthService.getCurrentUser() && Number(AuthService.getCurrentUser().balance) < (Number(orderQuantity) * Number(orderModal.crop.pricePerKg)))

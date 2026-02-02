@@ -20,6 +20,9 @@ public class OrderDTO {
     private BigDecimal totalPrice;
     private OrderStatus status;
     private String buyerRole;
+    private Long distributorId;
+    private String distributorName;
     private String blockchainTxHash;
     private LocalDateTime createdAt;
+    private String deliveryAddress; // Buyer's delivery address
 }

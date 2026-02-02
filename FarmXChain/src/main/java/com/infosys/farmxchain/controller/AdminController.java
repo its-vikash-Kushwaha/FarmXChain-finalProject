@@ -228,4 +228,23 @@ public class AdminController {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    /**
+     * POST /admin/orders/{orderId}/assign-distributor
+     * Assign an order to a distributor
+     */
+    @PostMapping("/orders/{orderId}/assign-distributor")
+    public ResponseEntity<ApiResponse<OrderDTO>> assignOrderToDistributor(
+            @PathVariable Long orderId,
+            @RequestParam Long distributorId
+    ) {
+        OrderDTO order = orderService.assignToDistributor(orderId, distributorId);
+        ApiResponse<OrderDTO> response = ApiResponse.<OrderDTO>builder()
+                .success(true)
+                .message("Order assigned to distributor successfully")
+                .data(order)
+                .statusCode(HttpStatus.OK.value())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

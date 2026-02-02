@@ -150,6 +150,40 @@ class AdminService {
       throw error.response?.data || error.message;
     }
   }
+
+  async assignOrderToDistributor(orderId, distributorId) {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/admin/orders/${orderId}/assign-distributor`,
+        null,
+        {
+          headers: this.getAuthHeaders(),
+          params: { distributorId }
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  }
+
+  async getDistributors() {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/admin/users`, {
+        headers: this.getAuthHeaders()
+      });
+      // Filter only distributors
+      if (response.data && response.data.data) {
+        return {
+          ...response.data,
+          data: response.data.data.filter(user => user.role === 'DISTRIBUTOR')
+        };
+      }
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  }
 }
 
 const adminService = new AdminService();

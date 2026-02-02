@@ -40,6 +40,7 @@ public class LogisticsController {
     }
 
     @GetMapping("/order/{orderId}")
+    @PreAuthorize("hasAnyRole('FARMER', 'CONSUMER', 'RETAILER', 'DISTRIBUTOR', 'ADMIN')")
     public ResponseEntity<ApiResponse<ShipmentDTO>> getShipmentByOrder(@PathVariable Long orderId) {
         ShipmentDTO shipment = logisticsService.getShipmentByOrderId(orderId);
         return ResponseEntity.ok(new ApiResponse<>(true, "Shipment fetched", shipment));

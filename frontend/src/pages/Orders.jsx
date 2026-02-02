@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import OrderService from '../services/OrderService';
 import LogisticsService from '../services/LogisticsService';
+import FarmerService from '../services/FarmerService';
 import AuthService from '../services/AuthService';
 import { Link } from 'react-router-dom';
 
@@ -14,8 +15,17 @@ const Orders = () => {
     const [statusUpdating, setStatusUpdating] = useState(null);
     const [activeTab, setActiveTab] = useState('ACTIVE'); // 'ACTIVE' or 'PAST'
 
+    // Distributor assignment state
+    const [distributors, setDistributors] = useState([]);
+    const [showAssignModal, setShowAssignModal] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [selectedDistributor, setSelectedDistributor] = useState('');
+
     useEffect(() => {
         loadOrders();
+        if (isFarmer) {
+            loadDistributors();
+        }
     }, []);
 
     const loadOrders = async () => {
@@ -28,6 +38,46 @@ const Orders = () => {
             console.error(err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const loadDistributors = async () => {
+        try {
+            const response = await FarmerService.getDistributors();
+            setDistributors(response.data || []);
+        } catch (err) {
+            console.error('Failed to load distributors:', err);
+        }
+    };
+
+    const handleAssignDistributor = async () => {
+        console.log('handleAssignDistributor called');
+        console.log('Selected Order:', selectedOrder);
+        console.log('Selected Distributor:', selectedDistributor);
+
+        if (!selectedDistributor || !selectedOrder) {
+            console.error('Missing data:', { selectedDistributor, selectedOrder });
+            setError('Please select a distributor');
+            return;
+        }
+
+        try {
+            setError('');
+            setSuccess('');
+            console.log('Calling assignOrderToDistributor with:', selectedOrder.id, selectedDistributor);
+
+            const response = await FarmerService.assignOrderToDistributor(selectedOrder.id, selectedDistributor);
+            console.log('Assignment response:', response);
+
+            setSuccess('Distributor assigned successfully! Order is now ASSIGNED.');
+            setShowAssignModal(false);
+            setSelectedOrder(null);
+            setSelectedDistributor('');
+            await loadOrders();
+        } catch (err) {
+            console.error('Assignment error:', err);
+            const errorMessage = err.message || err.error || JSON.stringify(err) || 'Failed to assign distributor';
+            setError(errorMessage);
         }
     };
 
@@ -70,6 +120,8 @@ const Orders = () => {
         switch (status) {
             case 'PENDING': return 'bg-yellow-100 text-yellow-800';
             case 'ACCEPTED': return 'bg-blue-100 text-blue-800';
+            case 'ASSIGNED': return 'bg-cyan-100 text-cyan-800';
+            case 'IN_TRANSIT': return 'bg-purple-100 text-purple-800';
             case 'REJECTED': return 'bg-red-100 text-red-800';
             case 'SHIPPED': return 'bg-indigo-100 text-indigo-800';
             case 'DELIVERED': return 'bg-green-100 text-green-800';
@@ -79,7 +131,7 @@ const Orders = () => {
 
     const filteredOrders = orders.filter(order => {
         if (activeTab === 'ACTIVE') {
-            return ['PENDING', 'ACCEPTED', 'SHIPPED', 'DELIVERED'].includes(order.status);
+            return ['PENDING', 'ACCEPTED', 'ASSIGNED', 'IN_TRANSIT', 'SHIPPED', 'DELIVERED'].includes(order.status);
         } else {
             return ['COMPLETED', 'REJECTED', 'CANCELLED'].includes(order.status);
         }
@@ -94,7 +146,7 @@ const Orders = () => {
                             {isFarmer ? 'Sales Hub' : 'My Purchases'}
                         </h1>
                         <p className="text-neutral-500 mt-2 font-medium">
-                            {isFarmer ? 'Manage your incoming orders and logistics.' : 'Track your crop purchases and deliveries.'}
+                            {isFarmer ? 'Manage your incoming orders and assign distributors.' : 'Track your crop purchases and deliveries.'}
                         </p>
                     </div>
                     <div className="flex items-center space-x-2 bg-white p-1.5 rounded-2xl shadow-sm border border-neutral-200">
@@ -212,18 +264,28 @@ const Orders = () => {
 
                                             {isFarmer && order.status === 'ACCEPTED' && (
                                                 <button
-                                                    onClick={() => handleStartShipment(order.id)}
-                                                    disabled={statusUpdating === order.id}
-                                                    className="w-full px-8 py-5 bg-indigo-600 text-white rounded-2xl font-black text-sm tracking-wide shadow-xl shadow-indigo-100 transition-all hover:bg-indigo-700 hover:-translate-y-1 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3"
+                                                    onClick={() => {
+                                                        setSelectedOrder(order);
+                                                        setShowAssignModal(true);
+                                                    }}
+                                                    className="w-full px-8 py-5 bg-purple-600 text-white rounded-2xl font-black text-sm tracking-wide shadow-xl shadow-purple-100 transition-all hover:bg-purple-700 hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3"
                                                 >
                                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                                     </svg>
-                                                    INITIATE SHIPMENT
+                                                    ASSIGN DISTRIBUTOR
                                                 </button>
                                             )}
 
-                                            {(order.status === 'SHIPPED' || order.status === 'DELIVERED') && (
+                                            {isFarmer && (order.status === 'ASSIGNED' || order.status === 'IN_TRANSIT') && (
+                                                <div className="w-full px-8 py-5 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl border-2 border-purple-200">
+                                                    <p className="text-xs text-purple-600 font-bold uppercase tracking-widest mb-1">Assigned Distributor</p>
+                                                    <p className="text-lg font-bold text-purple-900">{order.distributorName || 'Distributor'}</p>
+                                                    <p className="text-xs text-purple-500 mt-2">Shipment is being handled</p>
+                                                </div>
+                                            )}
+
+                                            {(order.status === 'IN_TRANSIT' || order.status === 'SHIPPED' || order.status === 'DELIVERED') && (
                                                 <div className="flex flex-col gap-3">
                                                     {!isFarmer && order.status === 'DELIVERED' && (
                                                         <button
@@ -263,6 +325,70 @@ const Orders = () => {
                                 )}
                             </div>
                         ))}
+                    </div>
+                )}
+
+                {/* Assign Distributor Modal */}
+                {showAssignModal && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                        <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full transform transition-all">
+                            <div className="px-8 py-6 border-b border-gray-200 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-t-3xl">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-2xl font-bold text-white">Assign Distributor</h3>
+                                    <button onClick={() => setShowAssignModal(false)} className="text-white hover:text-gray-200">
+                                        <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="px-8 py-6 space-y-4">
+                                <div className="bg-gray-50 p-4 rounded-2xl">
+                                    <p className="text-xs text-gray-500 font-bold uppercase mb-1">Order Details</p>
+                                    <p className="text-lg font-bold text-gray-900">{selectedOrder?.cropName}</p>
+                                    <p className="text-sm text-gray-600">Quantity: {selectedOrder?.quantity} kg</p>
+                                    <p className="text-sm text-gray-600">Buyer: {selectedOrder?.buyerName}</p>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-2">Select Distributor</label>
+                                    <select
+                                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition font-medium"
+                                        value={selectedDistributor}
+                                        onChange={(e) => setSelectedDistributor(e.target.value)}
+                                    >
+                                        <option value="">Choose a distributor...</option>
+                                        {distributors.map(dist => (
+                                            <option key={dist.id} value={dist.id}>
+                                                {dist.name} - {dist.email}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+                                    <p className="text-sm text-yellow-700">
+                                        Once assigned, the distributor will be able to create and manage shipment for this order.
+                                    </p>
+                                </div>
+
+                                <div className="flex justify-end space-x-3 pt-4">
+                                    <button
+                                        onClick={() => setShowAssignModal(false)}
+                                        className="px-6 py-3 text-sm font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleAssignDistributor}
+                                        disabled={!selectedDistributor}
+                                        className="px-6 py-3 text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-xl shadow-lg transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                    >
+                                        Assign Distributor
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>

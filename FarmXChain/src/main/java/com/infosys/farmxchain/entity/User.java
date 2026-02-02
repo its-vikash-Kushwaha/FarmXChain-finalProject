@@ -77,6 +77,15 @@ public class User {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
         isVerified = false;
+        
+        // Set initial balance based on role
+        if (balance == null) {
+            if (role == Role.DISTRIBUTOR) {
+                balance = java.math.BigDecimal.ZERO; // Distributors earn through deliveries
+            } else {
+                balance = java.math.BigDecimal.valueOf(500000); // Demo balance for other roles
+            }
+        }
     }
 
     @PreUpdate
